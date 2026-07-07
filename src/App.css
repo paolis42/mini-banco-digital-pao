@@ -1,0 +1,149 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: system-ui, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  background: #38bdf8;
+  color: #082f49;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 12px;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.contenedor {
+  width: min(960px, 92%);
+  margin: 32px auto;
+}
+
+.auth {
+  max-width: 460px;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.encabezado h1,
+.encabezado p {
+  margin: 0;
+}
+
+.tarjeta {
+  border: 1px solid #334155;
+  border-radius: 18px;
+  padding: 22px;
+  background: #111827;
+  box-shadow: 0 18px 40px #02061766;
+}
+
+.formulario {
+  display: grid;
+  gap: 12px;
+}
+
+.saldo {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.saldo strong {
+  color: #86efac;
+  font-size: clamp(32px, 5vw, 56px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.botones {
+  display: flex;
+  gap: 10px;
+}
+
+.link {
+  margin-top: 12px;
+  background: transparent;
+  color: #38bdf8;
+  padding-left: 0;
+}
+
+.mensaje {
+  border-left: 4px solid #38bdf8;
+  border-radius: 8px;
+  padding: 12px;
+  background: #0f172a;
+}
+
+.historial {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.historial li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #334155;
+  padding: 12px 0;
+}
+
+.historial span {
+  display: block;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.positivo {
+  color: #86efac;
+}
+
+.negativo {
+  color: #fca5a5;
+}
+
+@media (max-width: 720px) {
+  .encabezado,
+  .grid,
+  .historial li {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+}
