@@ -21,6 +21,14 @@ const dinero = (valor) =>
     currency: "CLP"
   }).format(valor || 0);
 
+const fechaMovimiento = (fecha) => {
+  if (!fecha?.toDate) return "Fecha pendiente";
+
+  return fecha.toDate().toLocaleString("es-CL", {
+    dateStyle: "short",
+    timeStyle: "short"
+  });
+};
 function App() {
   const [usuario, setUsuario] = useState(null);
   const [perfil, setPerfil] = useState(null);
@@ -295,9 +303,10 @@ function App() {
               return (
                 <li key={mov.id}>
                   <div>
-                    <strong>{recibido ? "Recepción" : "Envío"}</strong>
-                    <span>{recibido ? mov.emisorEmail : mov.receptorEmail}</span>
-                  </div>
+                  <strong>{recibido ? "Recepción" : "Envío"}</strong>
+                 <span>{recibido ? mov.emisorEmail : mov.receptorEmail}</span>
+                 <span>{fechaMovimiento(mov.fecha)}</span>
+                 </div>
                   <strong className={recibido ? "positivo" : "negativo"}>
                     {recibido ? "+" : "-"} {dinero(mov.monto)}
                   </strong>
