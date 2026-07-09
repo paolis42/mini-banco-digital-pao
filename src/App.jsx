@@ -60,13 +60,18 @@ function App() {
     setCargando(true);
 
     const unsubPerfil = escucharPerfil(
-      usuario.uid,
-      (snap) => {
-        setPerfil(snap.exists() ? { uid: usuario.uid, ...snap.data() } : null);
-        setCargando(false);
-      },
-      () => mostrarMensaje("No se pudo cargar el perfil")
-    );
+  usuario.uid,
+  async (snap) => {
+    if (!snap.exists()) {
+      await crearPerfil(usuario, usuario.email.split("@")[0]);
+      return;
+    }
+
+    setPerfil({ uid: usuario.uid, ...snap.data() });
+    setCargando(false);
+  },
+  () => mostrarMensaje("No se pudo cargar el perfil")
+  );
 
     const unsubMovimientos = escucharMovimientos(
       usuario.uid,
