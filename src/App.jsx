@@ -195,28 +195,31 @@ function App() {
         <form onSubmit={handleAuthSubmit} className="tarjeta formulario">
           {modoRegistro && (
             <input
-              name="nombre"
-              value={authForm.nombre}
-              onChange={handleAuthChange}
-              placeholder="Nombre"
-            />
+             name="nombre"
+             value={authForm.nombre}
+             onChange={handleAuthChange}
+             placeholder="Nombre"
+             autoComplete="off"
+             />
           )}
 
-          <input
-            name="email"
-            type="email"
-            value={authForm.email}
-            onChange={handleAuthChange}
-            placeholder="Email"
-          />
+           <input
+           name="email"
+           type="email"
+           value={authForm.email}
+           onChange={handleAuthChange}
+           placeholder="Email"
+           autoComplete="off"
+           />
 
-          <input
-            name="password"
-            type="password"
-            value={authForm.password}
-            onChange={handleAuthChange}
-            placeholder="Contraseña"
-          />
+           <input
+           name="password"
+           type="password"
+           value={authForm.password}
+           onChange={handleAuthChange}
+           placeholder="Contraseña"
+           autoComplete="new-password"
+           />
 
           <button disabled={procesando}>
             {modoRegistro ? "Registrarme" : "Iniciar sesión"}
