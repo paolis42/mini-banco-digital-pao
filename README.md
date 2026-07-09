@@ -21,6 +21,7 @@ Es una aplicación hecha con React, Vite, Firebase Authentication y Cloud Firest
 - Cada movimiento muestra tipo, contraparte, fecha y monto.
 - Cierre de sesión con limpieza del estado.
 - Depósito y retiro simulado como bonus.
+- Filtro de búsqueda en el historial como bonus.
 
 ## Tecnologías usadas
 
@@ -152,3 +153,5 @@ También me sirvió para detectar y corregir errores. Por ejemplo, al principio 
 Otro problema fue que algunos usuarios existían en Firebase Authentication, pero no tenían perfil creado en Firestore. Para solucionarlo agregué una validación que crea el perfil automáticamente si no existe. También corregí detalles del formulario, como limpiar estados y evitar autocompletados molestos del navegador.
 
 En resumen, usé IA como guía para avanzar y revisar errores, pero fui probando la app, entendiendo los cambios y ajustando el código para que funcionara según lo pedido.
+
+También agregué un filtro para buscar movimientos por email o tipo de movimiento, y lo probé con los usuarios de prueba.
