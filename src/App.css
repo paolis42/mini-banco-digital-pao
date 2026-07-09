@@ -147,3 +147,7 @@ input {
     flex-direction: column;
   }
 }
+.buscador-historial {
+  width: 100%;
+  margin-bottom: 20px;
+}

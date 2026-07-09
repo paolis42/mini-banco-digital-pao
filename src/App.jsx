@@ -33,6 +33,7 @@ function App() {
   const [usuario, setUsuario] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [movimientos, setMovimientos] = useState([]);
+  const [busquedaHistorial, setBusquedaHistorial] = useState("");
   const [modoRegistro, setModoRegistro] = useState(false);
   const [authForm, setAuthForm] = useState({ nombre: "", email: "", password: "" });
   const [transferencia, setTransferencia] = useState({ email: "", monto: "" });
@@ -176,11 +177,24 @@ function App() {
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
-    setUsuario(null);
-    setPerfil(null);
-    setMovimientos([]);
-  };
+  await signOut(auth);
+  setUsuario(null);
+  setPerfil(null);
+  setMovimientos([]);
+  setBusquedaHistorial("");
+};
+  const movimientosFiltrados = movimientos.filter((mov) => {
+  const texto = busquedaHistorial.trim().toLowerCase();
+  const recibido = mov.receptorUid === perfil?.uid;
+  const tipo = recibido ? "recepcion recepción" : "envio envío";
+
+  return (
+    tipo.includes(texto) ||
+    mov.emisorEmail?.toLowerCase().includes(texto) ||
+    mov.receptorEmail?.toLowerCase().includes(texto) ||
+    mov.descripcion?.toLowerCase().includes(texto)
+  );
+});
 
   if (cargando) {
     return <main className="contenedor">Cargando...</main>;
@@ -298,32 +312,43 @@ function App() {
 
       {mensaje && <p className="mensaje">{mensaje}</p>}
 
-      <section className="tarjeta">
-        <h2>Historial</h2>
+       <section className="tarjeta">
+       <h2>Historial</h2>
 
-        {movimientos.length === 0 ? (
-          <p>No tienes movimientos todavía.</p>
-        ) : (
-          <ul className="historial">
-            {movimientos.map((mov) => {
-              const recibido = mov.receptorUid === perfil.uid;
+       <input
+    className="buscador-historial"
+    value={busquedaHistorial}
+    onChange={(e) => setBusquedaHistorial(e.target.value)}
+    placeholder="Buscar por email o tipo de movimiento"
+    autoComplete="off"
+  />
 
-              return (
-                <li key={mov.id}>
-                  <div>
-                  <strong>{recibido ? "Recepción" : "Envío"}</strong>
-                 <span>{recibido ? mov.emisorEmail : mov.receptorEmail}</span>
-                 <span>{fechaMovimiento(mov.fecha)}</span>
-                 </div>
-                  <strong className={recibido ? "positivo" : "negativo"}>
-                    {recibido ? "+" : "-"} {dinero(mov.monto)}
-                  </strong>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+  {movimientos.length === 0 ? (
+    <p>No tienes movimientos todavía.</p>
+  ) : movimientosFiltrados.length === 0 ? (
+    <p>No se encontraron movimientos.</p>
+  ) : (
+    <ul className="historial">
+      {movimientosFiltrados.map((mov) => {
+        const recibido = mov.receptorUid === perfil.uid;
+
+        return (
+          <li key={mov.id}>
+            <div>
+              <strong>{recibido ? "Recepción" : "Envío"}</strong>
+              <span>{recibido ? mov.emisorEmail : mov.receptorEmail}</span>
+              <span>{fechaMovimiento(mov.fecha)}</span>
+            </div>
+
+            <strong className={recibido ? "positivo" : "negativo"}>
+              {recibido ? "+" : "-"} {dinero(mov.monto)}
+            </strong>
+          </li>
+        );
+      })}
+    </ul>
+  )}
+</section>
     </main>
   );
 }
