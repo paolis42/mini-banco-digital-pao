@@ -6,6 +6,7 @@ import {
   signOut
 } from "firebase/auth";
 import { auth } from "./firebase";
+import { validarTransferencia } from "./utils/validaciones";
 import {
   buscarUsuarioPorEmail,
   cambiarSaldo,
@@ -128,33 +129,41 @@ function App() {
     }
   };
 
-  const handleTransferSubmit = async (e) => {
-    e.preventDefault();
-    setProcesando(true);
-    setMensaje("");
+ const handleTransferSubmit = async (e) => {
+  e.preventDefault();
+  setProcesando(true);
+  setMensaje("");
 
-    try {
-      const email = transferencia.email.trim().toLowerCase();
-      const monto = Number(transferencia.monto);
+  try {
+    const validacion = validarTransferencia({
+      emailDestino: transferencia.email,
+      emailUsuario: perfil.email,
+      monto: transferencia.monto,
+      saldo: perfil.saldo
+    });
 
-      if (!email) throw new Error("Ingresa el email del destinatario");
-      if (email === perfil.email) throw new Error("No puedes transferirte a ti misma");
-      if (!monto || monto <= 0) throw new Error("El monto debe ser mayor a 0");
-      if (monto > perfil.saldo) throw new Error("Saldo insuficiente");
-
-      const receptor = await buscarUsuarioPorEmail(email);
-
-      if (!receptor) throw new Error("El destinatario no existe");
-
-      await transferirDinero({ emisor: perfil, receptor, monto });
-      setTransferencia({ email: "", monto: "" });
-      mostrarMensaje("Transferencia realizada");
-    } catch (error) {
-      mostrarMensaje(error.message);
-    } finally {
-      setProcesando(false);
+    if (!validacion.ok) {
+      throw new Error(validacion.mensaje);
     }
-  };
+
+    const receptor = await buscarUsuarioPorEmail(validacion.email);
+
+    if (!receptor) throw new Error("El destinatario no existe");
+
+    await transferirDinero({
+      emisor: perfil,
+      receptor,
+      monto: validacion.monto
+    });
+
+    setTransferencia({ email: "", monto: "" });
+    mostrarMensaje("Transferencia realizada");
+  } catch (error) {
+    mostrarMensaje(error.message);
+  } finally {
+    setProcesando(false);
+  }
+};
 
   const handleCambioSaldo = async (tipo) => {
     setProcesando(true);
@@ -206,7 +215,7 @@ function App() {
         <h1>Mini Banco Digital</h1>
         <p>Inicia sesión o crea tu cuenta para comenzar.</p>
 
-        <form onSubmit={handleAuthSubmit} className="tarjeta formulario">
+        <form onSubmit={handleAuthSubmit} className="tarjeta formulario" noValidate>
           {modoRegistro && (
             <input
              name="nombre"
@@ -265,7 +274,7 @@ function App() {
       </section>
 
       <section className="grid">
-        <form onSubmit={handleTransferSubmit} className="tarjeta formulario">
+        <form onSubmit={handleTransferSubmit} className="tarjeta formulario" noValidate>
           <h2>Transferir</h2>
 
           <input
