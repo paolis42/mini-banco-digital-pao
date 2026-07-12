@@ -6,15 +6,12 @@ import {
   signOut
 } from "firebase/auth";
 import { auth } from "./firebase";
-import { validarTransferencia } from "./utils/validaciones";
 import TransferForm from "./components/TransferForm";
 import {
-  buscarUsuarioPorEmail,
   cambiarSaldo,
   crearPerfil,
   escucharMovimientos,
   escucharPerfil,
-  transferirDinero
 } from "./services/bankService";
 
 const dinero = (valor) =>
@@ -38,7 +35,6 @@ function App() {
   const [busquedaHistorial, setBusquedaHistorial] = useState("");
   const [modoRegistro, setModoRegistro] = useState(false);
   const [authForm, setAuthForm] = useState({ nombre: "", email: "", password: "" });
-  const [transferencia, setTransferencia] = useState({ email: "", monto: "" });
   const [montoRapido, setMontoRapido] = useState("");
   const [cargando, setCargando] = useState(true);
   const [procesando, setProcesando] = useState(false);
@@ -97,9 +93,7 @@ function App() {
     setAuthForm({ ...authForm, [e.target.name]: e.target.value });
   };
 
-  const handleTransferChange = (e) => {
-    setTransferencia({ ...transferencia, [e.target.name]: e.target.value });
-  };
+ 
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -129,42 +123,6 @@ function App() {
       setProcesando(false);
     }
   };
-
- const handleTransferSubmit = async (e) => {
-  e.preventDefault();
-  setProcesando(true);
-  setMensaje("");
-
-  try {
-    const validacion = validarTransferencia({
-      emailDestino: transferencia.email,
-      emailUsuario: perfil.email,
-      monto: transferencia.monto,
-      saldo: perfil.saldo
-    });
-
-    if (!validacion.ok) {
-      throw new Error(validacion.mensaje);
-    }
-
-    const receptor = await buscarUsuarioPorEmail(validacion.email);
-
-    if (!receptor) throw new Error("El destinatario no existe");
-
-    await transferirDinero({
-      emisor: perfil,
-      receptor,
-      monto: validacion.monto
-    });
-
-    setTransferencia({ email: "", monto: "" });
-    mostrarMensaje("Transferencia realizada");
-  } catch (error) {
-    mostrarMensaje(error.message);
-  } finally {
-    setProcesando(false);
-  }
-};
 
   const handleCambioSaldo = async (tipo) => {
     setProcesando(true);
