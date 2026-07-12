@@ -96,4 +96,52 @@ describe("TransferForm", () => {
 
     expect(await screen.findByText("Transferencia realizada")).toBeInTheDocument();
   });
+
+  it("muestra error si el destinatario no existe", async () => {
+    const user = userEvent.setup();
+
+    buscarUsuarioPorEmail.mockResolvedValue(null);
+
+    render(<TransferForm perfil={perfil} />);
+
+    await user.type(
+      screen.getByPlaceholderText("Email del destinatario"),
+      "levi.ackerman@gmail.com"
+    );
+    await user.type(screen.getByPlaceholderText("Monto"), "5000");
+    await user.click(screen.getByRole("button", { name: /enviar transferencia/i }));
+
+    expect(await screen.findByText("El destinatario no existe")).toBeInTheDocument();
+
+    expect(buscarUsuarioPorEmail).toHaveBeenCalledWith("levi.ackerman@gmail.com");
+    expect(transferirDinero).not.toHaveBeenCalled();
+  });
+
+  it("muestra error si el servicio de transferencia falla", async () => {
+    const user = userEvent.setup();
+
+    const receptor = {
+      uid: "user-2",
+      nombre: "Levi Ackerman",
+      email: "levi.ackerman@gmail.com",
+      saldo: 100000
+    };
+
+    buscarUsuarioPorEmail.mockResolvedValue(receptor);
+    transferirDinero.mockRejectedValue(new Error("Error al transferir"));
+
+    render(<TransferForm perfil={perfil} />);
+
+    await user.type(
+      screen.getByPlaceholderText("Email del destinatario"),
+      "levi.ackerman@gmail.com"
+    );
+    await user.type(screen.getByPlaceholderText("Monto"), "5000");
+    await user.click(screen.getByRole("button", { name: /enviar transferencia/i }));
+
+    expect(await screen.findByText("Error al transferir")).toBeInTheDocument();
+
+    expect(buscarUsuarioPorEmail).toHaveBeenCalledWith("levi.ackerman@gmail.com");
+    expect(transferirDinero).toHaveBeenCalledTimes(1);
+  });
 });
