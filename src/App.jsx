@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./firebase";
 import TransferForm from "./components/TransferForm";
+import Historial from "./components/Historial";
 import {
   cambiarSaldo,
   crearPerfil,
@@ -20,14 +21,7 @@ const dinero = (valor) =>
     currency: "CLP"
   }).format(valor || 0);
 
-const fechaMovimiento = (fecha) => {
-  if (!fecha?.toDate) return "Fecha pendiente";
 
-  return fecha.toDate().toLocaleString("es-CL", {
-    dateStyle: "short",
-    timeStyle: "short"
-  });
-};
 function App() {
   const [usuario, setUsuario] = useState(null);
   const [perfil, setPerfil] = useState(null);
@@ -151,18 +145,6 @@ function App() {
   setMovimientos([]);
   setBusquedaHistorial("");
 };
-  const movimientosFiltrados = movimientos.filter((mov) => {
-  const texto = busquedaHistorial.trim().toLowerCase();
-  const recibido = mov.receptorUid === perfil?.uid;
-  const tipo = recibido ? "recepcion recepción" : "envio envío";
-
-  return (
-    tipo.includes(texto) ||
-    mov.emisorEmail?.toLowerCase().includes(texto) ||
-    mov.receptorEmail?.toLowerCase().includes(texto) ||
-    mov.descripcion?.toLowerCase().includes(texto)
-  );
-});
 
   if (cargando) {
     return <main className="contenedor">Cargando...</main>;
@@ -259,43 +241,12 @@ function App() {
 
       {mensaje && <p className="mensaje">{mensaje}</p>}
 
-       <section className="tarjeta">
-       <h2>Historial</h2>
-
-       <input
-    className="buscador-historial"
-    value={busquedaHistorial}
-    onChange={(e) => setBusquedaHistorial(e.target.value)}
-    placeholder="Buscar por email o tipo de movimiento"
-    autoComplete="off"
-  />
-
-  {movimientos.length === 0 ? (
-    <p>No tienes movimientos todavía.</p>
-  ) : movimientosFiltrados.length === 0 ? (
-    <p>No se encontraron movimientos.</p>
-  ) : (
-    <ul className="historial">
-      {movimientosFiltrados.map((mov) => {
-        const recibido = mov.receptorUid === perfil.uid;
-
-        return (
-          <li key={mov.id}>
-            <div>
-              <strong>{recibido ? "Recepción" : "Envío"}</strong>
-              <span>{recibido ? mov.emisorEmail : mov.receptorEmail}</span>
-              <span>{fechaMovimiento(mov.fecha)}</span>
-            </div>
-
-            <strong className={recibido ? "positivo" : "negativo"}>
-              {recibido ? "+" : "-"} {dinero(mov.monto)}
-            </strong>
-          </li>
-        );
-      })}
-    </ul>
-  )}
-</section>
+<Historial
+  movimientos={movimientos}
+  perfil={perfil}
+  busquedaHistorial={busquedaHistorial}
+  setBusquedaHistorial={setBusquedaHistorial}
+/>
     </main>
   );
 }
