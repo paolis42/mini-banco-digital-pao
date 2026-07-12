@@ -70,13 +70,14 @@ function TransferForm({ perfil, onTransferenciaExitosa }) {
       />
 
       <input
-        name="monto"
-        type="number"
-        value={transferencia.monto}
-        onChange={handleChange}
-        placeholder="Monto"
-        min="1"
-      />
+     name="monto"
+     type="text"
+     inputMode="numeric"
+     value={transferencia.monto}
+     onChange={handleChange}
+     placeholder="Monto"
+     autoComplete="off"
+/>
 
       <button disabled={procesando}>Enviar transferencia</button>
 
