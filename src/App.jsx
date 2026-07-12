@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { validarTransferencia } from "./utils/validaciones";
+import TransferForm from "./components/TransferForm";
 import {
   buscarUsuarioPorEmail,
   cambiarSaldo,
@@ -274,28 +275,7 @@ function App() {
       </section>
 
       <section className="grid">
-        <form onSubmit={handleTransferSubmit} className="tarjeta formulario" noValidate>
-          <h2>Transferir</h2>
-
-          <input
-            name="email"
-            type="email"
-            value={transferencia.email}
-            onChange={handleTransferChange}
-            placeholder="Email del destinatario"
-          />
-
-          <input
-            name="monto"
-            type="number"
-            value={transferencia.monto}
-            onChange={handleTransferChange}
-            placeholder="Monto"
-            min="1"
-          />
-
-          <button disabled={procesando}>Enviar transferencia</button>
-        </form>
+        <TransferForm perfil={perfil} />
 
         <div className="tarjeta formulario">
           <h2>Depósito / retiro</h2>

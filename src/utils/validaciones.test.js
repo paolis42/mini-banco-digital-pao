@@ -13,8 +13,10 @@ describe("validarTransferencia", () => {
     ["monto negativo", "-1000", "El monto debe ser mayor a 0"],
     ["monto cero", "0", "El monto debe ser mayor a 0"],
     ["monto no numérico", "abc", "El monto debe ser un número"],
-    ["monto con decimales", "10.5", "El monto debe ser un número entero"]
-  ])("rechaza transferencia con %s", (_, monto, mensajeEsperado) => {
+    ["monto con decimales", "10.5", "El monto debe ser un número entero sin puntos ni comas"],
+    ["monto con separador de miles", "5.000", "El monto debe ser un número entero sin puntos ni comas"],
+    ["monto con coma", "10,5", "El monto debe ser un número entero sin puntos ni comas"]
+   ])("rechaza transferencia con %s", (_, monto, mensajeEsperado) => {
     const resultado = validarTransferencia({
       ...datosBase,
       monto
