@@ -144,13 +144,13 @@ También se usan estados como `procesando` para deshabilitar botones mientras se
 
 Las suscripciones a Firebase se manejan con `useEffect`, y se limpian con `unsubscribe()` cuando corresponde.
 
-## Evaluación 2: Testing unitario
+## Evaluación 3: Testing unitario
 
-En esta segunda parte se agregaron pruebas unitarias al proyecto.
+En esta evaluación se agregaron pruebas unitarias al proyecto.
 
 Para esto se configuró Vitest junto con React Testing Library, user-event y jsdom.
 
-La idea fue probar las partes más importantes del proyecto sin conectarse a Firebase real durante los tests.
+La idea de esta evaluación fue probar las partes más importantes del proyecto, pero sin usar Firebase real en los tests.
 
 ## Comandos para los tests
 
@@ -174,7 +174,7 @@ npm run coverage
 
 ## Tests realizados
 
-Se hicieron pruebas en tres partes principales del proyecto.
+Se hicieron pruebas en cuatro partes principales del proyecto.
 
 ### 1. Validaciones de transferencia
 
@@ -240,6 +240,25 @@ Se comprobó que:
 - Permita filtrar movimientos.
 - Muestre un mensaje cuando no se encuentran resultados.
 
+### 4. Suscripciones de App
+
+Archivo:
+
+```txt
+src/App.test.jsx
+```
+
+En estos tests se revisó el manejo de las suscripciones principales de la aplicación.
+
+Se comprobó que:
+
+- Se llamen las suscripciones cuando hay un usuario autenticado.
+- Se llame a `unsubscribe` al desmontar el componente.
+- Se cree el perfil si el documento del usuario no existe.
+- No se inicien suscripciones si no hay usuario autenticado.
+
+Este test corresponde al bonus del hook de suscripción, porque verifica que al desmontar el componente se limpien las suscripciones correctamente.
+
 ## Mocking de servicios
 
 Para los tests no se usó Firebase real.
@@ -249,6 +268,8 @@ Se usaron mocks con `vi.mock` y `vi.fn` para simular funciones del servicio, por
 ```txt
 buscarUsuarioPorEmail
 transferirDinero
+escucharPerfil
+escucharMovimientos
 ```
 
 Esto permite probar casos correctos y casos con error sin depender de internet, Firebase o Firestore.
@@ -265,6 +286,7 @@ Se hicieron estos cambios:
 - Se creó el componente `TransferForm`.
 - Se creó el componente `Historial`.
 - Se dejó `App.jsx` más ordenado y con menos responsabilidades.
+- Se agregaron mocks para probar servicios sin conectarse a Firebase real.
 
 Un caso importante fue el input del monto. Al principio usaba `type="number"`, pero al probar el valor `5.000`, el navegador lo tomaba como `5`. Por eso cambié ese input a `type="text"` y dejé la validación en una función aparte.
 
@@ -275,8 +297,8 @@ Esto ayudó a que el comportamiento fuera más claro y más fácil de probar.
 Resultado final:
 
 ```txt
-Test Files  3 passed
-Tests       23 passed
+Test Files  4 passed
+Tests       26 passed
 ```
 
 ## Cobertura obtenida
@@ -284,13 +306,27 @@ Tests       23 passed
 Resultado del comando `npm run coverage`:
 
 ```txt
-Statements: 94.11%
-Branches:   87.03%
-Functions:  100%
-Lines:      96.96%
+Statements: 67.92%
+Branches:   67.39%
+Functions:  62.5%
+Lines:      70.86%
 ```
 
-La cobertura supera el mínimo solicitado de 70%.
+La cobertura de líneas supera el mínimo solicitado de 70%.
+
+Además, las partes principales que fueron separadas para testear quedaron con buena cobertura:
+
+```txt
+src/components    Lines 97.61%
+src/utils         Lines 95.83%
+```
+
+## Bonus realizados
+
+También se realizaron bonus de la evaluación:
+
+- Test del hook de suscripción, verificando que al desmontar el componente se llame `unsubscribe`.
+- Tests parametrizados con `it.each` para validar varios casos de montos inválidos.
 
 ## Uso de IA
 
@@ -298,11 +334,13 @@ Usé IA como apoyo durante el desarrollo del proyecto, pero fui revisando y prob
 
 En la primera parte me ayudó a ordenar algunas ideas, revisar validaciones y separar mejor la lógica de Firebase en servicios.
 
-En la segunda parte la usé como apoyo para entender mejor cómo armar los tests unitarios, cómo usar mocks y cómo separar componentes para que fueran más fáciles de probar.
+En esta evaluación la usé como apoyo para entender mejor cómo armar los tests unitarios, cómo usar mocks y cómo separar componentes para que fueran más fáciles de probar.
 
 Un ejemplo fue el caso del monto `5.000`. Al hacer el test, se detectó que el input `type="number"` no servía bien para esa validación, porque el valor se convertía a `5`. Por eso se cambió a `type="text"` y se validó el monto manualmente.
 
-También se fueron corrigiendo errores a medida que aparecían en la terminal. Cada cambio se probó con:
+También se agregó un test extra para comprobar que las suscripciones se limpian correctamente con `unsubscribe` al desmontar el componente.
+
+Cada cambio se fue probando en la terminal con:
 
 ```bash
 npm test -- --run
